@@ -1,7 +1,13 @@
 <?php
-function requests($url, $ua) {
+// Requests Type = 0 for GET
+// Requests Type = 1 for POST
+function requests($url, $ua, $type=0, $params="") {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
+	if($type == 1) {
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+	}
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -61,9 +67,12 @@ if ( $webURL != NULL ) {
 	$httphgrabURL = "http://api.hackertarget.com/httpheaders/?q=".$webURL;
 	$httphgrabDATA = file_get_contents($httphgrabURL);
 	echo $httphgrabDATA;
-	echo "\n\n$yellow:::$white Subdomain Enumeration$yellow:$normal\n";
+	echo "\n\n$yellow:::$white Certificate Search$yellow:$normal\n";
 	$crtshData = requests("https://crt.sh/?q=".$webURL."&output=json", $ua);
 	echo $crtshData;
+	echo "\n\n$yellow:::$white Reverse IP Domain Check$yellow:$normal\n";
+	$ygsrevIPData = requests("https://domains.yougetsignal.com/domains.php", $ua, 1, "remoteAddress=".$webURL."&key=");
+	echo $ygsrevIPData;
 	echo "\n$yellow:::$white Thanks for Using our Program\n$yellow:::$white Have a Nice Day, Bye Bye$normal\n";
 }
 else {

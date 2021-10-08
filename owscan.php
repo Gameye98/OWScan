@@ -1,4 +1,16 @@
 <?php
+function requests($url, $ua) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_setopt($ch, CURLOPT_USERAGENT, $ua);
+	$res = curl_exec($ch);
+	curl_close($ch);
+	return $res;
+}
+$ua = "Mozilla/5.0 (Linux; Android 5.1.1; Andromax A16C3H Build/LMY47V) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.111 Mobile Safari/537.36";
 system("clear");
 $red = "\033[1;31m";
 $yellow = "\033[1;33m";
@@ -43,13 +55,15 @@ if ( $webURL != NULL ) {
 	$linkgrabDATA = file_get_contents($linkgrabURL);
 	echo $linkgrabDATA;
 	echo "\n\n$yellow:::$white IPGeolocation$yellow:$normal\n";
-	$geoipURL = "https://tools.keycdn.com/geo.json?host=".$webURL;
-	$geoipDATA = file_get_contents($geoipURL);
+	$geoipDATA = requests("https://tools.keycdn.com/geo.json?host=".$webURL, "keycdn-tools:https://".$webURL);
 	echo $geoipDATA;
 	echo "\n\n$yellow:::$white HTTP Header Grabber$yellow:$normal\n";
 	$httphgrabURL = "http://api.hackertarget.com/httpheaders/?q=".$webURL;
 	$httphgrabDATA = file_get_contents($httphgrabURL);
 	echo $httphgrabDATA;
+	echo "\n\n$yellow:::$white Subdomain Enumeration$yellow:$normal\n";
+	$crtshData = requests("https://crt.sh/?q=".$webURL."&output=json", $ua);
+	echo $crtshData;
 	echo "\n$yellow:::$white Thanks for Using our Program\n$yellow:::$white Have a Nice Day, Bye Bye$normal\n";
 }
 else {
